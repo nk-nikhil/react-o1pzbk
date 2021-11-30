@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './style.css';
+import MOCK_DATA from './MOCK_DATA.json';
 
 export default function App() {
   const data = [
@@ -62,6 +63,9 @@ export default function App() {
   ];
 
   const [count, setCount] = useState(1);
+  const [likes, setLikes] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [userdata, setUserData] = useState([]);
 
   var incVal = () => {
     setCount(count + 1);
@@ -83,69 +87,150 @@ export default function App() {
     classes = count === 1 ? 'noactive-btn' : 'btn';
     return classes;
   }
+  const likesVal = () => {
+    setLikes(!likes);
+    // var maxLikes = likes+1;
+    // console.log(maxLikes);
+  };
+  useEffect(() => {
+    fetch(`https://jsonplaceholder.typicode.com/users`)
+      .then((response) => response.json())
+      .then(setUserData);
+  }, []);
+
   return (
-    <div>
-      <div className="digits">
-        {createDigits()}
-        <button>0</button>
-        <button>.</button>
-        <button>=</button>
+    <>
+      <input
+        type="text"
+        placeholder="Search.."
+        onChange={(event) => {
+          setSearchTerm(event.target.value);
+        }}
+      ></input>
+
+      {userdata
+        .slice(0, 5)
+        .filter((val1) => {
+          if (searchTerm == '') return val1;
+          else if (val1.name.toLowerCase().includes(searchTerm.toLowerCase()))
+            return val1;
+        })
+        .map((val1, key) => {
+          return (
+            <div className="user-data-api" key={key}>
+              <label>Id:</label>
+              {val1.id} <br />
+              <label>First Name:</label>
+              {val1.name}
+              <br />
+              <label>Email:</label>
+              {val1.email}
+            </div>
+          );
+        })}
+
+      <input
+        type="text"
+        placeholder="Search.."
+        onChange={(event) => {
+          setSearchTerm(event.target.value);
+        }}
+      ></input>
+      {MOCK_DATA.slice(0, 5)
+        .filter((val) => {
+          if (searchTerm == '') return val;
+          else if (
+            val.firstName.toLowerCase().includes(searchTerm.toLowerCase())
+          )
+            return val;
+        })
+        .map((val, key) => {
+          return (
+            <div className="mock-data" key={key}>
+              <label>First Name:</label>
+              {val.firstName}
+              <br />
+              <label>Last Name:</label>
+              {val.lastName}
+            </div>
+          );
+        })}
+
+      <div>
+        <div className="digits">
+          {createDigits()}
+          <button>0</button>
+          <button>.</button>
+          <button>=</button>
+        </div>
+
+        {data[0].body.img_registration.map((img_registration) => {
+          return (
+            <img
+              width="300px"
+              height="200px"
+              src={img_registration.src}
+              alt={img_registration.alt}
+            />
+          );
+        })}
+        <h1>Hello React!</h1>
+
+        {likes ? (
+          <button onClick={likesVal}>Liked</button>
+        ) : (
+          <button style={{ backgroundColor: 'blue' }} onClick={likesVal}>
+            Like
+          </button>
+        )}
+        {/* <button onClick = {likesVal}>Like</button><br/> */}
+        {/* <span>Total {likes}</span> */}
+        <br />
+
+        <button className={getBadgeClasses()} onClick={decVal}>
+          -
+        </button>
+        <span>{count}</span>
+        <button className="btn" onClick={incVal}>
+          +
+        </button>
+        <p>Start editing to see some magic happen :)</p>
+        {data.map((data, index) => (
+          <>
+            <p>
+              {data.title}
+              <br />
+              <br />
+              <br />
+              {data.body.ul_2}
+            </p>
+
+            <p dangerouslySetInnerHTML={{ __html: data.body.p_important }}></p>
+          </>
+        ))}
+
+        {data[0].body.ul_1.map((ele) => {
+          const arr = ele.split('||');
+          return (
+            <p>
+              {arr[0]} - {arr[1]}
+            </p>
+          );
+        })}
+        <hr />
+        {data[0].body.ul_2.slice(0, 2).map((ul_2) => {
+          return <li className="li1">{ul_2}</li>;
+        })}
+        <br />
+        <hr />
+        <br />
+        {data[0].body.ul_2.slice(2).map((ul_2) => {
+          return <li className="li2">{ul_2}</li>;
+        })}
+        <a href="www.google.com">
+          <button>{data[0].body.a_left_block[0].link_text}</button>
+        </a>
       </div>
-
-      {data[0].body.img_registration.map((img_registration) => {
-        return (
-          <img
-            width="300px"
-            height="200px"
-            src={img_registration.src}
-            alt={img_registration.alt}
-          />
-        );
-      })}
-      <h1>Hello React!</h1>
-      <button className={getBadgeClasses()} onClick={decVal}>
-        -
-      </button>
-      <span>{count}</span>
-      <button className="btn" onClick={incVal}>
-        +
-      </button>
-      <p>Start editing to see some magic happen :)</p>
-      {data.map((data, index) => (
-        <>
-          <p>
-            {data.title}
-            <br />
-            <br />
-            <br />
-            {data.body.ul_2}
-          </p>
-
-          <p dangerouslySetInnerHTML={{ __html: data.body.p_important }}></p>
-        </>
-      ))}
-
-      {data[0].body.ul_1.map((ele) => {
-        const arr = ele.split('||');
-        return (
-          <p>
-            {arr[0]} - {arr[1]}
-          </p>
-        );
-      })}
-      <hr />
-      {data[0].body.ul_2.slice(0, 2).map((ul_2) => {
-        return <li className="li1">{ul_2}</li>;
-      })}
-      <br />
-      <hr />
-      <br />
-      {data[0].body.ul_2.slice(2).map((ul_2) => {
-        return <li className="li2">{ul_2}</li>;
-      })}
-      <a href="www.google.com">
-        <button>{data[0].body.a_left_block[0].link_text}</button>
-      </a>
-    </div>
+    </>
   );
 }

@@ -81,3 +81,23 @@ button {
   appearance: none;
   margin: 5px;
 }
+.mock-data {
+  border: 1px solid red;
+  padding: 20px;
+  width: 50%;
+  margin: 10px;
+  background-color: aquamarine;
+}
+.user-data-api {
+  border: 2px solid blue;
+  border-radius: 20px;
+  padding: 20px;
+  width: 50%;
+  margin: 10px;
+  background-color: silver;
+}
+
+label {
+  font-weight: bold;
+  color: red;
+}
